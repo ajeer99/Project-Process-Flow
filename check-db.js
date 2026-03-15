@@ -1,11 +1,21 @@
 const { PrismaClient } = require('@prisma/client');
+require('dotenv').config();
+const bcrypt = require('bcryptjs');
+
 const prisma = new PrismaClient();
 
-async function check() {
-    const builds = await prisma.build.count();
-    const modules = await prisma.module.count();
-    const projects = await prisma.project.count();
-    console.log({ projects, builds, modules });
+async function main() {
+  const user = await prisma.user.findUnique({ where: { email: 'admin@example.com' } });
+  if (user) {
+    console.log("User found:", user.email, "ID:", user.id);
+    console.log("Role:", user.role);
+    console.log("IsActive:", user.isActive);
+    console.log("Has password field:", !!user.password);
+    console.log("Password hash:", user.password);
+    console.log("Password matches 'password123':", bcrypt.compareSync('password123', user.password));
+  } else {
+    console.log("User not found in database!");
+  }
 }
 
-check().finally(() => prisma.$disconnect());
+main().catch(console.error).finally(() => prisma.$disconnect());
