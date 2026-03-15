@@ -1,0 +1,98 @@
+[
+  {
+    "id": "cmmpqygcj000jwbzc1wqyi7os",
+    "title": "Payment Button Unresponsive on Invoice Page",
+    "status": "VERIFIED",
+    "timeSpent": 0,
+    "pmTimeSpent": 0,
+    "devTimeSpent": 0,
+    "testerTimeSpent": 0,
+    "developerId": null,
+    "developerGroupId": "cmmo1aym200018yj7qgwhnerh",
+    "resolvedById": null
+  },
+  {
+    "id": "cmmpsu0e30001nd9yvfymgp65",
+    "title": "Unable to Delete Customer Record",
+    "status": "VERIFIED",
+    "timeSpent": 3,
+    "pmTimeSpent": 2,
+    "devTimeSpent": 0,
+    "testerTimeSpent": 1,
+    "developerId": null,
+    "developerGroupId": "cmmo1aym200018yj7qgwhnerh",
+    "resolvedById": null
+  },
+  {
+    "id": "cmmpufdv80001kpcm9sgnst9b",
+    "title": "Print Button Non-functional on Invoice Page",
+    "status": "VERIFIED",
+    "timeSpent": 63,
+    "pmTimeSpent": 0,
+    "devTimeSpent": 57,
+    "testerTimeSpent": 6,
+    "developerId": null,
+    "developerGroupId": "cmmo1aym200018yj7qgwhnerh",
+    "resolvedById": null
+  },
+  {
+    "id": "cmmpqxknl000ewbzcx0cz0o09",
+    "title": "Invoice Customer 'Add Customer' Button Unresponsive",
+    "status": "VERIFIED",
+    "timeSpent": 1,
+    "pmTimeSpent": 0,
+    "devTimeSpent": 0,
+    "testerTimeSpent": 1,
+    "developerId": null,
+    "developerGroupId": "cmmo1aym200018yj7qgwhnerh",
+    "resolvedById": null
+  },
+  {
+    "id": "cmmps6kzn0006102d61r0gfvr",
+    "title": "Unable to Print Invoice",
+    "status": "VERIFIED",
+    "timeSpent": 14,
+    "pmTimeSpent": 0,
+    "devTimeSpent": 1,
+    "testerTimeSpent": 13,
+    "developerId": null,
+    "developerGroupId": "cmmo1aym200018yj7qgwhnerh",
+    "resolvedById": null
+  },
+  {
+    "id": "cmmprw95r0001102d3t8cc6w2",
+    "title": "Payment Button Unresponsive",
+    "status": "VERIFIED",
+    "timeSpent": 12,
+    "pmTimeSpent": 0,
+    "devTimeSpent": 1,
+    "testerTimeSpent": 11,
+    "developerId": null,
+    "developerGroupId": "cmmo1aym200018yj7qgwhnerh",
+    "resolvedById": null
+  },
+  {
+    "id": "cmmpx915s0007l0h8w89g862z",
+    "title": "Customer Account Not Saving",
+    "status": "VERIFIED",
+    "timeSpent": 26.64130000000001,
+    "pmTimeSpent": 0,
+    "devTimeSpent": 21.94303333333334,
+    "testerTimeSpent": 4.698266666666667,
+    "developerId": null,
+    "developerGroupId": "cmmo1aym200018yj7qgwhnerh",
+    "resolvedById": null
+  },
+  {
+    "id": "cmmpygtsb00057rm85z6ow5bs",
+    "title": "Invoice Field Not Editable",
+    "status": "VERIFIED",
+    "timeSpent": 5.775116666666667,
+    "pmTimeSpent": 0,
+    "devTimeSpent": 4.134133333333334,
+    "testerTimeSpent": 1.640983333333333,
+    "developerId": null,
+    "developerGroupId": "cmmo1aym200018yj7qgwhnerh",
+    "resolvedById": null
+  }
+]

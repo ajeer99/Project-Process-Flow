@@ -1,0 +1,4 @@
+src/app/admin/projects/[id]/bug-fixed-audit.tsx(49,61): error TS2322: Type '{ user: any; className: string; }' is not assignable to type 'IntrinsicAttributes & UserAvatarProps'.
+  Property 'user' does not exist on type 'IntrinsicAttributes & UserAvatarProps'.
+src/app/admin/projects/[id]/bug-fixed-audit.tsx(59,61): error TS2322: Type '{ user: any; className: string; }' is not assignable to type 'IntrinsicAttributes & UserAvatarProps'.
+  Property 'user' does not exist on type 'IntrinsicAttributes & UserAvatarProps'.

@@ -1,0 +1,42 @@
+
+> qa-portal@0.1.0 build
+> next build
+
+▲ Next.js 16.1.6 (Turbopack)
+- Environments: .env
+
+  Creating an optimized production build ...
+✓ Compiled successfully in 9.7s
+  Running TypeScript ...
+  Collecting page data using 19 workers ...
+  Generating static pages using 19 workers (0/15) ...
+  Generating static pages using 19 workers (3/15) 
+  Generating static pages using 19 workers (7/15) 
+  Generating static pages using 19 workers (11/15) 
+✓ Generating static pages using 19 workers (15/15) in 3.1s
+  Finalizing page optimization ...
+
+Route (app)
+┌ ○ /
+├ ○ /_not-found
+├ ƒ /admin/bugs
+├ ƒ /admin/bugs/[id]
+├ ƒ /admin/bugs/create
+├ ƒ /admin/builds
+├ ƒ /admin/builds/create
+├ ƒ /admin/dashboard
+├ ƒ /admin/modules
+├ ƒ /admin/modules/[id]/submodules/create
+├ ƒ /admin/modules/create
+├ ƒ /admin/projects
+├ ƒ /admin/projects/create
+├ ƒ /api/ai/analyze-bug
+├ ƒ /api/auth/[...nextauth]
+└ ○ /login
+
+
+ƒ Proxy (Middleware)
+
+○  (Static)   prerendered as static content
+ƒ  (Dynamic)  server-rendered on demand
+
