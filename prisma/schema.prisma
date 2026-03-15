@@ -1,0 +1,335 @@
+datasource db {
+  provider = "postgresql"
+  url      = env("DATABASE_URL")
+}
+
+generator client {
+  provider = "prisma-client-js"
+}
+
+model User {
+  id            String   @id @default(cuid())
+  name          String
+  email         String   @unique
+  password      String
+  role          Role     // ADMIN, DEVELOPER, TESTER
+  avatarUrl     String?
+  
+  // Tracking
+  notificationsEnabled Boolean @default(true)
+  canViewReports Boolean @default(false)
+  loginCount    Int      @default(0)
+  liveSessionMinutes Int @default(0)
+  lastActive    DateTime @default(now())
+  isOnline      Boolean  @default(false)
+  presence      String   @default("ONLINE")
+  isActive      Boolean  @default(true)
+  mustChangePassword Boolean @default(false)
+  
+  // Relations
+  projects               Project[]
+  managedProjects        Project[] @relation("ProjectManager")
+  modules                Module[]
+  bugsReported           Bug[]    @relation("BugCreator")
+  bugsTested             Bug[]    @relation("TesterAssigned")
+  bugsAssigned           Bug[]    @relation("DeveloperAssigned")
+  bugsResolved           Bug[]    @relation("Resolver")
+  bugsVerified           Bug[]    @relation("Verifier")
+  developerFlows         AssignmentFlow[] @relation("DeveloperFlows")
+  testerFlows            AssignmentFlow[] @relation("TesterFlows")
+  comments               Comment[]
+  notifications          Notification[] @relation("UserNotifications")
+  messagesSent           DirectMessage[] @relation("SenderMessages")
+  messagesRcvd           DirectMessage[] @relation("ReceiverMessages")
+  
+  groups                 Group[] @relation("GroupMembers")
+  
+  actionsPerformed       SystemActionLog[] @relation("ActionsPerformed")
+  
+  createdAt     DateTime @default(now())
+  updatedAt     DateTime @updatedAt
+}
+
+model Group {
+  id          String   @id @default(cuid())
+  name        String
+  description String?
+  type        GroupType @default(DEVELOPER)
+  
+  users       User[]   @relation("GroupMembers")
+  
+  developerFlows AssignmentFlow[] @relation("DeveloperGroupFlows")
+  testerFlows    AssignmentFlow[] @relation("TesterGroupFlows")
+  
+  bugsAssignedToDeveloper Bug[]   @relation("DeveloperGroupAssigned")
+  bugsAssignedToTester    Bug[]   @relation("TesterGroupAssigned")
+  
+  createdAt   DateTime @default(now())
+  updatedAt   DateTime @updatedAt
+}
+
+enum GroupType {
+  DEVELOPER
+  TESTER
+}
+
+enum Role {
+  ADMIN
+  PROJECT_MANAGER
+  DEVELOPER
+  TESTER
+}
+
+model AssignmentFlow {
+  id          String   @id @default(cuid())
+  
+  project     Project  @relation(fields: [projectId], references: [id], onDelete: Cascade)
+  projectId   String   @unique
+  
+  developer   User?    @relation("DeveloperFlows", fields: [developerId], references: [id])
+  developerId String?
+
+  developerGroup   Group?   @relation("DeveloperGroupFlows", fields: [developerGroupId], references: [id])
+  developerGroupId String?
+  
+  tester      User?    @relation("TesterFlows", fields: [testerId], references: [id])
+  testerId    String?
+
+  testerGroup      Group?   @relation("TesterGroupFlows", fields: [testerGroupId], references: [id])
+  testerGroupId    String?
+
+  createdAt   DateTime @default(now())
+  updatedAt   DateTime @updatedAt
+}
+
+model Project {
+  id              String   @id @default(cuid())
+  name            String
+  description     String?
+  status          String   @default("ACTIVE") // ACTIVE, APPROVED, ARCHIVED
+  imageUrl        String?
+  startDate       DateTime?
+  endDate         DateTime?
+
+  managerId       String?
+  manager         User?    @relation("ProjectManager", fields: [managerId], references: [id])
+  
+  modules         Module[]
+  builds          Build[]
+  users           User[]
+  bugs            Bug[]
+  assignmentFlow  AssignmentFlow?
+}
+
+model Module {
+  id        String  @id @default(cuid())
+  name      String
+  project   Project @relation(fields: [projectId], references: [id])
+  projectId String
+  bugs      Bug[]
+  subModules SubModule[]
+  users     User[]
+}
+
+model SubModule {
+  id        String  @id @default(cuid())
+  name      String
+  module    Module  @relation(fields: [moduleId], references: [id])
+  moduleId  String
+  bugs      Bug[]
+}
+
+model Build {
+  id           String   @id @default(cuid())
+  version      String
+  releaseNotes String?
+  project      Project  @relation(fields: [projectId], references: [id])
+  projectId    String
+  bugs         Bug[]
+  createdAt    DateTime @default(now())
+}
+
+model Bug {
+  id             String    @id @default(cuid())
+  title          String
+  description    String?
+  expectedResult String
+  actualResult   String
+  severity       Severity  @default(LOW)
+  status         Status    @default(OPEN)
+  isPinned       Boolean   @default(false)
+  
+  // Media & Attachments
+  videoUrl       String?
+  screenshotUrl  String?
+  stepsToRepro   String?
+  logs           String?
+  environment    String?  // Browser, OS, Device
+  
+  // Tracking & Reporting
+  timeSpent        Float    @default(0) // legacy total time in minutes, can be decimal (e.g., 0.5 for 30 seconds)
+  pmTimeSpent      Float    @default(0) // time in minutes
+  devTimeSpent     Float    @default(0) // time in minutes
+  testerTimeSpent  Float    @default(0) // time in minutes
+  lastStatusUpdateAt DateTime @default(now())
+  reopenCount      Int      @default(0)
+  isInvalid        Boolean  @default(false)
+  automationResult String?
+  resolvedAt       DateTime?
+  
+  resolvedBy       User?    @relation("Resolver", fields: [resolvedById], references: [id])
+  resolvedById     String?
+  resolverIp       String?
+  resolverMac      String?
+  
+  verifiedBy       User?    @relation("Verifier", fields: [verifiedById], references: [id])
+  verifiedById     String?
+  verifierIp       String?
+  verifierMac      String?
+  
+  // Relations
+  projectId      String
+  project        Project   @relation(fields: [projectId], references: [id])
+
+  build          Build    @relation(fields: [buildId], references: [id])
+  buildId        String
+  module         Module   @relation(fields: [moduleId], references: [id])
+  moduleId       String
+  subModule      SubModule? @relation(fields: [subModuleId], references: [id])
+  subModuleId    String?
+  
+  creator        User?    @relation("BugCreator", fields: [creatorId], references: [id])
+  creatorId      String?
+  creatorIp      String?
+  creatorMac     String?
+
+  tester         User?    @relation("TesterAssigned", fields: [testerId], references: [id])
+  testerId       String?
+  testerGroup    Group?   @relation("TesterGroupAssigned", fields: [testerGroupId], references: [id])
+  testerGroupId  String?
+
+  developer      User?    @relation("DeveloperAssigned", fields: [developerId], references: [id])
+  developerId    String?
+  developerGroup Group?   @relation("DeveloperGroupAssigned", fields: [developerGroupId], references: [id])
+  developerGroupId String?
+
+  assignedAt     DateTime?
+  createdAt      DateTime @default(now())
+  updatedAt      DateTime @updatedAt
+  
+  comments       Comment[]
+}
+
+enum Severity {
+  CRITICAL
+  HIGH
+  MEDIUM
+  LOW
+}
+
+enum Status {
+  OPEN
+  IN_PROGRESS
+  NEED_MORE_INFO
+  FIXED
+  READY_FOR_RETEST
+  VERIFIED
+  REOPENED
+}
+
+model Comment {
+  id        String   @id @default(cuid())
+  text      String
+  isPinned  Boolean  @default(false)
+  
+  bug       Bug      @relation(fields: [bugId], references: [id], onDelete: Cascade)
+  bugId     String
+  
+  user      User     @relation(fields: [userId], references: [id], onDelete: Cascade)
+  userId    String
+  
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+}
+
+model Notification {
+  id        String   @id @default(cuid())
+  title     String
+  message   String
+  isRead    Boolean  @default(false)
+  linkUrl   String?
+  
+  user      User     @relation("UserNotifications", fields: [userId], references: [id], onDelete: Cascade)
+  userId    String
+  
+  createdAt DateTime @default(now())
+}
+
+model SmtpSettings {
+  id        String   @id @default(cuid())
+  host      String
+  port      Int
+  user      String
+  password  String
+  fromEmail String
+  updatedAt DateTime @updatedAt
+}
+
+model DirectMessage {
+  id         String   @id @default(cuid())
+  content    String
+  senderId   String
+  sender     User     @relation("SenderMessages", fields: [senderId], references: [id], onDelete: Cascade)
+  receiverId String
+  receiver   User     @relation("ReceiverMessages", fields: [receiverId], references: [id], onDelete: Cascade)
+  isRead     Boolean  @default(false)
+  createdAt  DateTime @default(now())
+}
+
+model AppSettings {
+  id        String   @id @default(cuid())
+  appName   String   @default("QA Portal")
+  logoUrl   String?
+  iconUrl   String?
+  autoBackupEnabled Boolean @default(false)
+  backupFrequency   String  @default("DAILY") // DAILY, WEEKLY, MONTHLY
+  lastBackupDate    DateTime?
+  updatedAt DateTime @updatedAt
+}
+
+model EmailLog {
+  id        String   @id @default(cuid())
+  to        String
+  subject   String
+  body      String   @db.Text
+  status    String   // SENT, FAILED
+  error     String?  @db.Text
+  createdAt DateTime @default(now())
+}
+
+model SystemActionLog {
+  id            String   @id @default(cuid())
+  action        SystemAction
+  entityType    SystemEntity
+  entityId      String
+  details       String?  @db.Text
+  
+  performedById String
+  performedBy   User     @relation("ActionsPerformed", fields: [performedById], references: [id])
+  
+  createdAt     DateTime @default(now())
+}
+
+enum SystemAction {
+  CREATE
+  UPDATE
+  DELETE
+  SUSPEND
+  RESTORE
+}
+
+enum SystemEntity {
+  USER
+  PROJECT
+  SYSTEM_SETTING
+}
