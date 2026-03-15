@@ -94,8 +94,8 @@ export default async function TimeTrackingReport({
     let totalTesterLogged = 0;
     let grandTotalLogged = 0;
 
-    const timeEntries = bugs.map(b => {
-        const bug = b as any;
+    const timeEntries = bugs.map((b: any) => {
+        const bug = b;
         const pmTime = bug.pmTimeSpent || 0;
         const devTime = bug.devTimeSpent || 0;
         const testerTime = bug.testerTimeSpent || 0;
